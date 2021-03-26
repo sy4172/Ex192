@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "555102606490",
+    "firebase_url": "https://ex192-ec04c-default-rtdb.firebaseio.com",
+    "project_id": "ex192-ec04c",
+    "storage_bucket": "ex192-ec04c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555102606490:android:e888653824e5628c267b23",
+        "android_client_info": {
+          "package_name": "com.example.ex192_vaccineapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "555102606490-fpvsvorfjoue5esg1n9la3hkcon3tlnq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGqLj-4MJFBRDh9DawQt2jiEZVH0lQ7hU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "555102606490-fpvsvorfjoue5esg1n9la3hkcon3tlnq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

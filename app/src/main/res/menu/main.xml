@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/Input"
+        android:title="Input Details" />
+    <item
+        android:id="@+id/UpgradeData"
+        android:title="Upgrade Data" />
+    <item
+        android:id="@+id/Credits"
+        android:title="Credits" />
+</menu>
