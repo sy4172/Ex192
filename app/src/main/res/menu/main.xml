@@ -8,6 +8,9 @@
         android:id="@+id/UpgradeData"
         android:title="Upgrade Data" />
     <item
+        android:id="@+id/SortData"
+        android:title="Sort Data" />
+    <item
         android:id="@+id/Credits"
         android:title="Credits" />
 </menu>

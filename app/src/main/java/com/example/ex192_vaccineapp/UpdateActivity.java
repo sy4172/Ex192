@@ -55,7 +55,7 @@ public class UpdateActivity extends AppCompatActivity implements View.OnCreateCo
                     for (DataSnapshot data: dS.getChildren()) {
                         Student temp = data.getValue(Student.class);
                         studentTitle1.add(data.getKey());
-                        studentNames1.add(Objects.requireNonNull(temp).getName());
+                        studentNames1.add(Objects.requireNonNull(temp).getName() + " " + Objects.requireNonNull(temp).getFamilyName());
                         if (temp.getIsAllergic()){
                             statusList1.add("Allergic student");
                         }
@@ -88,7 +88,8 @@ public class UpdateActivity extends AppCompatActivity implements View.OnCreateCo
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         v.setOnCreateContextMenuListener(this);
         menu.setHeaderTitle("ACTIONS");
-        menu.add("Update Details");
+        menu.add("Remove Student");
+        menu.add("Update Student");
         super.onCreateContextMenu(menu, v, menuInfo);
     }
 
@@ -97,7 +98,7 @@ public class UpdateActivity extends AppCompatActivity implements View.OnCreateCo
         AdapterView.AdapterContextMenuInfo adpInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int pos = adpInfo.position;
         String action = item.getTitle().toString();
-        if (action.equals("Update Details")){
+        if (action.equals("Update Student")){
             Intent si = new Intent(this, InputActivity.class);
             if (statusList.get(pos).equals("Allergic student")){
                 si.putExtra("AllergicStatus", true);
@@ -108,6 +109,14 @@ public class UpdateActivity extends AppCompatActivity implements View.OnCreateCo
             si.putExtra("StudentTitle", studentTitle.get(pos)); // Student name to display in the fields
             startActivity(si);
         }
+        else if (action.equals("Remove Student")){
+            studentNames.remove(pos);
+            statusList.remove(pos);
+            customadp.notifyDataSetChanged();
+            lv.setAdapter(customadp);
+            refStudents.child(studentTitle.get(pos)).removeValue(); // Removing from the FB
+        }
+
         return super.onContextItemSelected(item);
     }
 
@@ -118,5 +127,20 @@ public class UpdateActivity extends AppCompatActivity implements View.OnCreateCo
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        Intent si;
 
+        if (id == R.id.Input){
+            si = new Intent(this, InputActivity.class);
+            startActivity(si);
+        }
+        else if (id == R.id.Credits){
+            si = new Intent(this, CreditsActivity.class);
+            startActivity(si);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }

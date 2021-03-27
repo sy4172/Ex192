@@ -1,10 +1,12 @@
 package com.example.ex192_vaccineapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,6 +45,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
     ArrayAdapter<String> adp;
     int currentPosVac;
 
+    Intent gi;
     Student studentToDisplay;
     String dateStr;
 
@@ -66,10 +69,10 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         adp = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, vaccineTypes);
         sp.setAdapter(adp);
 
-        classET.setText("");
-        gradeET.setText("");
+        classET.setHint("Class");
+        gradeET.setHint("Grade");
 
-        Intent gi = getIntent();
+        gi = getIntent();
         if (gi != null){
             String studentTitle = gi.getStringExtra("StudentTitle");
             boolean status = gi.getBooleanExtra("AllergicStatus", false);
@@ -81,7 +84,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 tbt.setChecked(false);
                 vaccineLayoutView.setVisibility(View.VISIBLE);
             }
-
+            studentToDisplay = new Student();
             refStudents.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dS) {
@@ -104,6 +107,10 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 }
             });
 
+            if (studentToDisplay.getV1() != null){
+                locationET.setText(studentToDisplay.getV1().getVaccineLocation());
+                displayDate.setText(studentToDisplay.getV1().getDate());
+            }
         }
     }
 
@@ -137,30 +144,38 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         dateStr = "";
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // this studentToDisplay isn't allergic student
-        if (studentToDisplay.getV1() == null){
+        if (gi != null){
+            if (Objects.isNull(studentToDisplay.getV1())){
+                locationET.setText("");
+                displayDate.setText("");
+                dateStr = "";
+            }
+            else{
+                if (position == 0){
+                    locationET.setText(studentToDisplay.getV1().getVaccineLocation());
+                    displayDate.setText(studentToDisplay.getV1().getDate());
+                }
+                else{
+                    if (Objects.isNull(studentToDisplay.getV2())){
+                        locationET.setText("");
+                        displayDate.setText("");
+                        dateStr = "";
+                    }
+                    else {
+                        locationET.setText(studentToDisplay.getV2().getVaccineLocation());
+                        displayDate.setText(studentToDisplay.getV2().getDate());
+                    }
+                }
+            }
+        }
+        else{
             locationET.setText("");
             displayDate.setText("");
             dateStr = "";
-        }
-        else{
-            if (position == 0){
-                locationET.setText(studentToDisplay.getV1().getVaccineLocation());
-                displayDate.setText(studentToDisplay.getV1().getDate());
-            }
-            else{
-//                if ( Optional.ofNullable(studentToDisplay.getV2())){
-//                    locationET.setText("");
-//                    displayDate.setText("");
-//                    dateStr = "";
-//                }
-//                else {
-//                    locationET.setText(studentToDisplay.getV2().getVaccineLocation());
-//                    displayDate.setText(studentToDisplay.getV2().getDate());
-//                }
-            }
         }
         currentPosVac = position;
     }
@@ -170,10 +185,6 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
     }
 
     public void sendToFB(View view) {
-        // Check if the first was write before he wants to add the second
-        // When getting the first vaccine - don't raise the EditText objects of the details
-        // if (vaccineTypes[currentPosVac].equals("Second Vac.") && )
-
         boolean checkData = checkAll();
         if (checkData){
             String name = nameET.getText().toString();
@@ -216,8 +227,6 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                         dateStr = "";
                         locationET.setText("");
                         displayDate.setText("");
-                        // Take the first vaccine form the fireBase and the update the Student info
-                        // Or try to update the properties of the V2
                     }
                 }
                 else if (vaccineTypes[currentPosVac].equals("First Vac.") && !isExist){
@@ -299,10 +308,11 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
             si = new Intent(this, UpdateActivity.class);
             startActivity(si);
         }
-//        else if (id == R.id.SortData){
-//            si = new Intent(this, SortActivity.class);
-//            startActivity(si);
-//        }
+        else if (id == R.id.SortData){
+            si = new Intent(this, SortActivity.class);
+            startActivity(si);
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

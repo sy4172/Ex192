@@ -33,7 +33,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:text="The state of the student:"
+                android:text="@string/the_state_of_the_student"
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textStyle="bold" />
@@ -49,8 +49,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:onClick="changeLayout"
-                android:textOff="Not allergic"
-                android:textOn="allergic"
+                android:textOff="@string/not_allergic"
+                android:textOn="@string/allergic"
                 app:backgroundTint="@color/cardview_dark_background" />
 
         </LinearLayout>
@@ -78,7 +78,7 @@
                     android:layout_height="0px"
                     android:layout_weight="2"
                     android:ems="10"
-                    android:hint="Name"
+                    android:hint="@string/name"
                     android:inputType="textPersonName" />
 
                 <Space
@@ -92,7 +92,7 @@
                     android:layout_height="0px"
                     android:layout_weight="2"
                     android:ems="10"
-                    android:hint="Family"
+                    android:hint="@string/family"
                     android:inputType="textPersonName" />
             </LinearLayout>
 
@@ -113,7 +113,7 @@
                     android:layout_height="0px"
                     android:layout_weight="2"
                     android:ems="10"
-                    android:hint="Class"
+                    android:hint="@string/classStr"
                     android:inputType="number" />
 
                 <Space
@@ -127,7 +127,7 @@
                     android:layout_height="0px"
                     android:layout_weight="2"
                     android:ems="10"
-                    android:hint="Grade"
+                    android:hint="@string/grade"
                     android:inputType="number" />
             </LinearLayout>
         </LinearLayout>
@@ -156,7 +156,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:gravity="center"
-                    android:text="Enter the vaccineis infomation"
+                    android:text="@string/enter_the_vaccines_infomation"
                     android:textAlignment="center"
                     android:textAllCaps="true"
                     android:textSize="18sp"
@@ -203,7 +203,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:ems="10"
-                    android:hint="Location"
+                    android:hint="@string/location"
                     android:inputType="textPersonName" />
 
                 <Space
@@ -271,7 +271,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:onClick="sendToFB"
-                    android:text="save details"
+                    android:text="@string/save_details"
                     app:backgroundTint="@color/cardview_dark_background" />
 
                 <Space

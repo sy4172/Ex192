@@ -2,4 +2,16 @@
     <string name="app_name">Ex192 - Vaccine App</string>
     <string name="this_app_was_created_by">this app was created by</string>
     <string name="shahar_yani">Shahar Yani</string>
+    <string name="together_we_will_get_rid_of_the_pigeon_virus">Together we will get rid of the pigeon virus</string>
+    <string name="go_to_get_vaccinated">go to get vaccinated</string>
+    <string name="the_state_of_the_student">The state of the student:</string>
+    <string name="not_allergic">Not allergic</string>
+    <string name="allergic">allergic</string>
+    <string name="name">Name</string>
+    <string name="family">Family</string>
+    <string name="classStr">Class</string>
+    <string name="grade">Grade</string>
+    <string name="enter_the_vaccines_infomation">Enter the vaccines infomation</string>
+    <string name="location">Location</string>
+    <string name="save_details">save details</string>
 </resources>
