@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,7 +31,7 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
     String[] options;
     ArrayAdapter<String> adp;
     ValueEventListener vel;
-    int selectedClass = 0;
+    int selectedClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,8 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
 
         adp = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, options);
         showOptions.setAdapter(adp);
+
+        selectedClass = 0;
     }
 
 
@@ -105,8 +108,8 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
 
             case "Order by grade":{
                 openAlertDialog();
-                if (selectedClass != 0){
-                    Query q = refStudents.orderByChild("isAllergic").equalTo(false).orderByChild("grade").equalTo(selectedClass);
+                if (!(selectedClass > 12 || selectedClass < 7)){
+                    Query q = refStudents.orderByChild("classNum").equalTo(selectedClass);
                     vel = new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dS) {
@@ -133,7 +136,7 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
             case "Order by class":{
-                Query q = refStudents.orderByChild("isAllergic").equalTo(false).orderByChild("class");
+                Query q = refStudents.orderByChild("classNum");
                 vel = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dS) {
@@ -162,6 +165,8 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
     private void openAlertDialog() {
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         final EditText classET = new EditText(this);
+        classET.setInputType(InputType.TYPE_CLASS_NUMBER);
+        adb.setTitle("Enter the class: (7 - 12)");
         adb.setView(classET);
         adb.setCancelable(false);
         adb.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -177,6 +182,9 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
                 selectedClass = Integer.parseInt(classET.getText().toString());
             }
         });
+
+        AlertDialog ad = adb.create();
+        ad.show();
     }
 
 
