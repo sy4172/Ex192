@@ -29,11 +29,15 @@ public class MainActivity extends AppCompatActivity {
         Intent si;
 
         if (id == R.id.Input){
-            si = new Intent(this, CreditsActivity.class);
+            si = new Intent(this, InputActivity.class);
             startActivity(si);
         }
         else if (id == R.id.UpgradeData){
             si = new Intent(this, UpdateActivity.class);
+            startActivity(si);
+        }
+        else if (id == R.id.sort){
+            si = new Intent(this, SortActivity.class);
             startActivity(si);
         }
         else if (id == R.id.Credits){

@@ -3,14 +3,14 @@
 
     <item
         android:id="@+id/Input"
-        android:title="Input Details" />
+        android:title="@string/input_details" />
     <item
         android:id="@+id/UpgradeData"
-        android:title="Upgrade Data" />
+        android:title="@string/upgrade_data" />
     <item
-        android:id="@+id/SortData"
-        android:title="Sort Data" />
+        android:id="@+id/sort"
+        android:title="@string/sort_data" />
     <item
         android:id="@+id/Credits"
-        android:title="Credits" />
+        android:title="@string/credits" />
 </menu>

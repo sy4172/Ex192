@@ -23,14 +23,11 @@ import android.widget.ToggleButton;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.example.ex192_vaccineapp.FBref.refStudents;
 
@@ -91,14 +88,25 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                     if (dS.exists()){
                         Student temp = new Student();
                         for (DataSnapshot data : dS.getChildren()){
-                            if (data.getKey().equals(studentTitle)){
+                            if (Objects.requireNonNull(data.getKey()).equals(studentTitle)){
                                 temp = data.getValue(Student.class);
                             }
                         }
-                        nameET.setText(temp.getName());
+                        nameET.setText(Objects.requireNonNull(temp).getName());
                         familyET.setText(temp.getFamilyName());
-                        classET.setText(String.valueOf(temp.getClassNum()));
-                        gradeET.setText(String.valueOf(temp.getGradeNum()));
+                        if (temp.getClassNum() == 0){
+                            classET.setText("");
+                        }
+                        else{
+                            classET.setText(String.valueOf(temp.getGradeNum()));
+                        }
+
+                        if (temp.getGradeNum() == 0){
+                            gradeET.setText("");
+                        }
+                        else{
+                            gradeET.setText(String.valueOf(temp.getGradeNum()));
+                        }
                         studentToDisplay = temp;
                     }
                 }
@@ -308,7 +316,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
             si = new Intent(this, UpdateActivity.class);
             startActivity(si);
         }
-        else if (id == R.id.SortData){
+        else if (id == R.id.sort){
             si = new Intent(this, SortActivity.class);
             startActivity(si);
         }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -13,12 +14,13 @@ import java.util.ArrayList;
 
 public class CustomAdapter extends BaseAdapter {
     Context context;
-    ArrayList<String> nameList, statusList;
+    ArrayList<String> nameList, details, statusList;
     LayoutInflater inflater;
 
-    public CustomAdapter(Context applicationContext, ArrayList<String> nameList, ArrayList<String> statusList) {
+    public CustomAdapter(Context applicationContext, ArrayList<String> nameList, ArrayList<String> details, ArrayList<String> statusList) {
         this.context = applicationContext;
         this.nameList = nameList;
+        this.details = details;
         this.statusList = statusList;
         this.inflater = LayoutInflater.from(applicationContext);
     }
@@ -43,14 +45,15 @@ public class CustomAdapter extends BaseAdapter {
         convertView = inflater.inflate(R.layout.custom_lv_layout, null);
 
         TextView studentNameTV = convertView.findViewById(R.id.studentNameTV);
-        TextView statusTV = convertView.findViewById(R.id.statusTv);
+        TextView detailsTV = convertView.findViewById(R.id.detailsTV);
+        ImageView iconIV = convertView.findViewById(R.id.iconIV);
 
         studentNameTV.setText(nameList.get(position));
-        statusTV.setText(statusList.get(position));
+        detailsTV.setText(details.get(position));
 
-        if (statusList.get(position).equals("Allergic student")) statusTV.setTextColor(Color.GRAY);
-        else if (statusList.get(position).equals("First vaccination was documented")) statusTV.setTextColor(Color.rgb(204, 204, 0));
-        else statusTV.setTextColor(Color.GREEN);
+        if (statusList.get(position).equals("Allergic student")) iconIV.setImageResource(R.drawable.minus);
+        else if (statusList.get(position).equals("First vaccination was documented")) iconIV.setImageResource(R.drawable.check);
+        else iconIV.setImageResource(R.drawable.doublev);
 
         return convertView;
     }

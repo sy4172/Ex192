@@ -112,6 +112,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0px"
                     android:layout_weight="2"
+                    android:text=""
                     android:ems="10"
                     android:hint="@string/classStr"
                     android:inputType="number" />
@@ -127,6 +128,7 @@
                     android:layout_height="0px"
                     android:layout_weight="2"
                     android:ems="10"
+                    android:text=""
                     android:hint="@string/grade"
                     android:inputType="number" />
             </LinearLayout>

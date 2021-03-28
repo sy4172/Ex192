@@ -26,7 +26,7 @@ import static com.example.ex192_vaccineapp.FBref.refStudents;
 public class UpdateActivity extends AppCompatActivity implements View.OnCreateContextMenuListener {
 
     ListView lv;
-    ArrayList<String> studentNames, statusList, studentTitle;
+    ArrayList<String> studentNames, statusList, studentTitle, details;
     CustomAdapter customadp;
 
     public UpdateActivity() {
@@ -51,11 +51,13 @@ public class UpdateActivity extends AppCompatActivity implements View.OnCreateCo
                 if (dS.exists()){
                     ArrayList<String> studentNames1 = new ArrayList<>();
                     ArrayList<String> statusList1 = new ArrayList<>();
+                    ArrayList<String> details1 = new ArrayList<>();
                     ArrayList<String> studentTitle1 = new ArrayList<>();
                     for (DataSnapshot data: dS.getChildren()) {
                         Student temp = data.getValue(Student.class);
                         studentTitle1.add(data.getKey());
                         studentNames1.add(Objects.requireNonNull(temp).getName() + " " + Objects.requireNonNull(temp).getFamilyName());
+                        details1.add("Class: "+Objects.requireNonNull(temp).getClassNum()+" Grade: "+ Objects.requireNonNull(temp).getGradeNum());
                         if (temp.getIsAllergic()){
                             statusList1.add("Allergic student");
                         }
@@ -66,8 +68,9 @@ public class UpdateActivity extends AppCompatActivity implements View.OnCreateCo
                             statusList1.add("First vaccination was documented");
                         }
                     }
-                    customadp = new CustomAdapter(getApplicationContext(), studentNames1, statusList1);
+                    customadp = new CustomAdapter(getApplicationContext(), studentNames1, details1, statusList1);
                     lv.setAdapter(customadp);
+                    details = details1;
                     statusList = statusList1;
                     studentNames = studentNames1;
                     studentTitle = studentTitle1;
@@ -134,6 +137,10 @@ public class UpdateActivity extends AppCompatActivity implements View.OnCreateCo
 
         if (id == R.id.Input){
             si = new Intent(this, InputActivity.class);
+            startActivity(si);
+        }
+        else if (id == R.id.sort){
+            si = new Intent(this, SortActivity.class);
             startActivity(si);
         }
         else if (id == R.id.Credits){

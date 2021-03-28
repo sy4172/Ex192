@@ -11,7 +11,11 @@
     <string name="family">Family</string>
     <string name="classStr">Class</string>
     <string name="grade">Grade</string>
-    <string name="enter_the_vaccines_infomation">Enter the vaccines infomation</string>
+    <string name="enter_the_vaccines_infomation">Enter the vaccines information</string>
     <string name="location">Location</string>
     <string name="save_details">save details</string>
+    <string name="input_details">Input Details</string>
+    <string name="upgrade_data">Upgrade Data</string>
+    <string name="sort_data">Sort Data</string>
+    <string name="credits">Credits</string>
 </resources>
