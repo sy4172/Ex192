@@ -5,8 +5,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,9 +30,10 @@ import java.util.Objects;
 public class SortActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     ListView showOptions, showResult;
-    ArrayList<String> results;
+    ArrayList<String> results, details, statusList;
     String[] options;
     ArrayAdapter<String> adp;
+    CustomAdapter customadp;
     ValueEventListener vel;
     int selectedClass;
 
@@ -45,6 +49,8 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
         showOptions.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         results = new ArrayList<>();
+        details = new ArrayList<>();
+        statusList = new ArrayList<>();
         options = new String[]{"All vaccinated students", "All allergic", "Order by grade", "Order by class"};
 
         adp = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, options);
@@ -66,12 +72,25 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dS) {
                         results.clear();
+                        statusList.clear();
+                        details.clear();
                         for (DataSnapshot data : dS.getChildren()){
                             Student studentTemp = data.getValue(Student.class);
                             results.add(Objects.requireNonNull(studentTemp).getName() + " " + studentTemp.getFamilyName());
+                            details.add("Class: "+ studentTemp.getClassNum() + " Grade:" + studentTemp.getGradeNum());
+
+                            if (studentTemp.getIsAllergic()){
+                                statusList.add("Allergic student");
+                            }
+                            else if (studentTemp.getV2() != null){
+                                statusList.add("All the vaccines were documented");
+                            }
+                            else{
+                                statusList.add("First vaccination was documented");
+                            }
                         }
-                        adp = new ArrayAdapter<String>(SortActivity.this, R.layout.support_simple_spinner_dropdown_item, results);
-                        showResult.setAdapter(adp);
+                        customadp = new CustomAdapter(getApplicationContext(), results, details, statusList);
+                        showResult.setAdapter(customadp);
                     }
 
                     @Override
@@ -89,12 +108,16 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dS) {
                         results.clear();
+                        statusList.clear();
+                        details.clear();
                         for (DataSnapshot data : dS.getChildren()){
                             Student studentTemp = data.getValue(Student.class);
                             results.add(Objects.requireNonNull(studentTemp).getName() + " " + studentTemp.getFamilyName());
+                            details.add("Class: "+ studentTemp.getClassNum() + " Grade: " + studentTemp.getGradeNum());
+                            statusList.add("Allergic student");
                         }
-                        adp = new ArrayAdapter<String>(SortActivity.this, R.layout.support_simple_spinner_dropdown_item, results);
-                        showResult.setAdapter(adp);
+                        customadp = new CustomAdapter(getApplicationContext(), results, details, statusList);
+                        showResult.setAdapter(customadp);
                     }
 
                     @Override
@@ -107,19 +130,31 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
             case "Order by grade":{
-                openAlertDialog();
-                if (!(selectedClass > 12 || selectedClass < 7)){
+                openAlertDialog(); // In order to input the selectedClass
+                if (selectedClass >= 7 && selectedClass <= 12){
                     Query q = refStudents.orderByChild("classNum").equalTo(selectedClass);
                     vel = new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dS) {
                             results.clear();
+                            statusList.clear();
+                            details.clear();
                             for (DataSnapshot data : dS.getChildren()){
                                 Student studentTemp = data.getValue(Student.class);
-                                results.add(Objects.requireNonNull(studentTemp).getName() + " " + studentTemp.getFamilyName());
+                                if (!studentTemp.getIsAllergic()){
+                                    results.add(Objects.requireNonNull(studentTemp).getName() + " " + studentTemp.getFamilyName());
+                                    details.add("Class: "+ studentTemp.getClassNum() + " Grade:" + studentTemp.getGradeNum());
+
+                                    if (studentTemp.getV2() != null){
+                                        statusList.add("All the vaccines were documented");
+                                    }
+                                    else{
+                                        statusList.add("First vaccination was documented");
+                                    }
+                                }
                             }
-                            adp = new ArrayAdapter<String>(SortActivity.this, R.layout.support_simple_spinner_dropdown_item, results);
-                            showResult.setAdapter(adp);
+                            customadp = new CustomAdapter(getApplicationContext(), results, details, statusList);
+                            showResult.setAdapter(customadp);
                         }
 
                         @Override
@@ -127,6 +162,7 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
                         }
                     };
                     q.addListenerForSingleValueEvent(vel);
+                    selectedClass = 0;
                 }
                 else{
                     Toast.makeText(this, "Enter correctly the class number", Toast.LENGTH_SHORT).show();
@@ -141,12 +177,24 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dS) {
                         results.clear();
+                        statusList.clear();
+                        details.clear();
                         for (DataSnapshot data : dS.getChildren()){
                             Student studentTemp = data.getValue(Student.class);
-                            results.add(Objects.requireNonNull(studentTemp).getName() + " " + studentTemp.getFamilyName());
+                            if (!studentTemp.getIsAllergic()){
+                                results.add(Objects.requireNonNull(studentTemp).getName() + " " + studentTemp.getFamilyName());
+                                details.add("Class: "+ studentTemp.getClassNum() + " Grade:" + studentTemp.getGradeNum());
+
+                                if (studentTemp.getV2() != null){
+                                    statusList.add("All the vaccines were documented");
+                                }
+                                else{
+                                    statusList.add("First vaccination was documented");
+                                }
+                            }
                         }
-                        adp = new ArrayAdapter<String>(SortActivity.this, R.layout.support_simple_spinner_dropdown_item, results);
-                        showResult.setAdapter(adp);
+                        customadp = new CustomAdapter(getApplicationContext(), results, details, statusList);
+                        showResult.setAdapter(customadp);
                     }
 
                     @Override
@@ -194,5 +242,32 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
             refStudents.removeEventListener(vel);
         }
         super.onPause();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        Intent si;
+
+        if (id == R.id.Input){
+            si = new Intent(this, InputActivity.class);
+            startActivity(si);
+        }
+        else if (id == R.id.UpgradeData){
+            si = new Intent(this, UpdateActivity.class);
+            startActivity(si);
+        }
+        else if (id == R.id.Credits){
+            si = new Intent(this, CreditsActivity.class);
+            startActivity(si);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

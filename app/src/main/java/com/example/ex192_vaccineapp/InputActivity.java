@@ -290,6 +290,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         boolean flag = true;
         int classNum = Integer.parseInt(classET.getText().toString());
         int gradeNum = Integer.parseInt(gradeET.getText().toString());
+
         if (nameET.getText().toString().isEmpty() || familyET.getText().toString().isEmpty() || classET.getText().toString().isEmpty() || gradeET.getText().toString().isEmpty())
             flag = false;
         if (classNum < 6 || classNum > 13 || gradeNum < 0) flag = false;
