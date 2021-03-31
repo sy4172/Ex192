@@ -109,6 +109,7 @@ public class UpdateActivity extends AppCompatActivity implements View.OnCreateCo
             else{
                 si.putExtra("AllergicStatus", false);
             }
+            si.putExtra("updateMode",true);
             si.putExtra("StudentTitle", studentTitle.get(pos)); // Student name to display in the fields
             startActivity(si);
         }

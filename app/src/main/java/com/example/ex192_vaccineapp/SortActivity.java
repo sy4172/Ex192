@@ -55,8 +55,6 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
 
         adp = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, options);
         showOptions.setAdapter(adp);
-
-        selectedClass = 0;
     }
 
 
@@ -77,12 +75,10 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
                         for (DataSnapshot data : dS.getChildren()){
                             Student studentTemp = data.getValue(Student.class);
                             results.add(Objects.requireNonNull(studentTemp).getName() + " " + studentTemp.getFamilyName());
-                            details.add("Class: "+ studentTemp.getClassNum() + " Grade:" + studentTemp.getGradeNum());
+                            details.add("Class: "+ studentTemp.getClassNum() + " Grade: " + studentTemp.getGradeNum());
 
-                            if (studentTemp.getIsAllergic()){
-                                statusList.add("Allergic student");
-                            }
-                            else if (studentTemp.getV2() != null){
+
+                            if (studentTemp.getV2() != null){
                                 statusList.add("All the vaccines were documented");
                             }
                             else{
@@ -130,7 +126,7 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
             case "Order by grade":{
-                openAlertDialog(); // In order to input the selectedClass
+                openAlertDialog();
                 if (selectedClass >= 7 && selectedClass <= 12){
                     Query q = refStudents.orderByChild("classNum").equalTo(selectedClass);
                     vel = new ValueEventListener() {
@@ -143,7 +139,7 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
                                 Student studentTemp = data.getValue(Student.class);
                                 if (!studentTemp.getIsAllergic()){
                                     results.add(Objects.requireNonNull(studentTemp).getName() + " " + studentTemp.getFamilyName());
-                                    details.add("Class: "+ studentTemp.getClassNum() + " Grade:" + studentTemp.getGradeNum());
+                                    details.add("Class: "+ studentTemp.getClassNum() + " Grade: " + studentTemp.getGradeNum());
 
                                     if (studentTemp.getV2() != null){
                                         statusList.add("All the vaccines were documented");
@@ -183,7 +179,7 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
                             Student studentTemp = data.getValue(Student.class);
                             if (!studentTemp.getIsAllergic()){
                                 results.add(Objects.requireNonNull(studentTemp).getName() + " " + studentTemp.getFamilyName());
-                                details.add("Class: "+ studentTemp.getClassNum() + " Grade:" + studentTemp.getGradeNum());
+                                details.add("Class: "+ studentTemp.getClassNum() + " Grade: " + studentTemp.getGradeNum());
 
                                 if (studentTemp.getV2() != null){
                                     statusList.add("All the vaccines were documented");
@@ -210,6 +206,11 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    /**
+     * Open openAlertDialog method is opening an alertDialog in oder to get the class number to display
+     * 'Order by grade' option.
+     *
+     */
     private void openAlertDialog() {
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         final EditText classET = new EditText(this);
@@ -230,9 +231,9 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
                 selectedClass = Integer.parseInt(classET.getText().toString());
             }
         });
-
         AlertDialog ad = adb.create();
         ad.show();
+
     }
 
 

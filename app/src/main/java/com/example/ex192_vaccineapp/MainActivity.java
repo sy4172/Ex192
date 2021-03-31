@@ -8,7 +8,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
+/**
+ *  * @author		Shahar Yani
+ *  * @version  	1.0
+ *  * @since		19/03/2021
+ *
+ *  * This MainActivity.class displays the opening activity
+ *    and a menu move to the whole activities.
+ *  *
+ *  */
 public class MainActivity extends AppCompatActivity {
 
     @Override

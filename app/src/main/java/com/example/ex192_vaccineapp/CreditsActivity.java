@@ -8,6 +8,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/**
+ *  * @author		Shahar Yani
+ *  * @version  	1.0
+ *  * @since		19/03/2021
+ *
+ *  * This Credits.class displays a credit activity
+ *    and a menu move to the whole activities
+ *  */
 public class CreditsActivity extends AppCompatActivity {
 
     @Override

@@ -31,6 +31,14 @@ import java.util.Objects;
 
 import static com.example.ex192_vaccineapp.FBref.refStudents;
 
+/**
+ *  * @author		Shahar Yani
+ *  * @version  	1.0
+ *  * @since		19/03/2021
+ *
+ *  * This InputActivity.class displays the input screen and make the submitting actions
+ *  and a menu move to the whole activities
+ *  */
 public class InputActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener {
 
     ToggleButton tbt;
@@ -39,8 +47,14 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
     TextView displayDate;
     Spinner sp;
     String [] vaccineTypes;
+    ArrayList<String> stuIdList;
     ArrayAdapter<String> adp;
     int currentPosVac;
+
+    // For the update mode
+    boolean updateMode;
+    String studentTitle;
+    Vaccines vac1, vac2;
 
     Intent gi;
     Student studentToDisplay;
@@ -61,6 +75,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         displayDate = findViewById(R.id.displayDate);
         sp = findViewById(R.id.sp);
 
+        // To display on a Spinner object the types of the vaccines
         vaccineTypes = new String[]{"First Vac.", "Second Vac."};
         sp.setOnItemSelectedListener(this);
         adp = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, vaccineTypes);
@@ -69,10 +84,14 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         classET.setHint("Class");
         gradeET.setHint("Grade");
 
+        stuIdList = new ArrayList<String>();
+
+        // What is getting from the UpdateActivity.class after the 'Update Data' was selected
         gi = getIntent();
         if (gi != null){
-            String studentTitle = gi.getStringExtra("StudentTitle");
+            studentTitle = gi.getStringExtra("StudentTitle");
             boolean status = gi.getBooleanExtra("AllergicStatus", false);
+            updateMode = gi.getBooleanExtra("updateMode", false);
             if (status){
                 tbt.setChecked(true);
                 vaccineLayoutView.setVisibility(View.INVISIBLE);
@@ -98,7 +117,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                             classET.setText("");
                         }
                         else{
-                            classET.setText(String.valueOf(temp.getGradeNum()));
+                            classET.setText(String.valueOf(temp.getClassNum()));
                         }
 
                         if (temp.getGradeNum() == 0){
@@ -122,6 +141,11 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         }
     }
 
+    /**
+     * Open calendar method is opening the Calendar object in order to get the date of the vaccine.
+     * And display the selected date on the layout.
+     * @param view the DatePickerDialog object
+     */
     public void openCalendar(View view) {
         Calendar calendar = Calendar.getInstance();
         final int year = calendar.get(Calendar.YEAR);
@@ -140,6 +164,12 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
 
     }
 
+    /**
+     * Change layout method is changing the layout of this activity based on the ToggleButton object.
+     * And clearing the selected date and location
+     *
+     * @param view the ToggleButton object
+     */
     public void changeLayout(View view) {
         if (tbt.isChecked()){
             vaccineLayoutView.setVisibility(View.INVISIBLE);
@@ -155,7 +185,6 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        // this studentToDisplay isn't allergic student
         if (gi != null){
             if (Objects.isNull(studentToDisplay.getV1())){
                 locationET.setText("");
@@ -192,6 +221,12 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
     public void onNothingSelected(AdapterView<?> parent) {
     }
 
+    /**
+     * sendToFB method is sending the student information into the FireBase.
+     * By checking the input and the existence of a student and making au update student's details.
+     *
+     * @param view the view
+     */
     public void sendToFB(View view) {
         boolean checkData = checkAll();
         if (checkData){
@@ -201,59 +236,91 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
             int gradeNum = Integer.parseInt(gradeET.getText().toString());
             boolean isAllergic = tbt.isChecked();
 
-            String title = name+""+familyName;
-            boolean isExist = checkExistence(title); // checking in the fireBase based on the keyID
+            if (!updateMode){
+                String title = classNum+""+name+""+familyName+""+gradeNum;
+                boolean isExist = checkExistence(title); // true  - if the student exist otherwise - false
 
-            if (isAllergic && !isExist){
-                Student student2 = new Student(name, familyName, classNum, gradeNum, isAllergic, null, null);
-                refStudents.child(title).setValue(student2);
-                Toast.makeText(this, "Saved successfully", Toast.LENGTH_SHORT).show();
+                if (isAllergic && !isExist){
+                    Student student2 = new Student(name, familyName, classNum, gradeNum, isAllergic, null, null);
+                    refStudents.child(title).setValue(student2);
+                    Toast.makeText(this, "Saved successfully", Toast.LENGTH_SHORT).show();
 
-                nameET.setText("");
-                familyET.setText("");
-                classET.setText("");
-                gradeET.setText("");
-            }
-            else  if (isAllergic)
-                Toast.makeText(this, "This Student has been inserted", Toast.LENGTH_SHORT).show();
-            else {
-                isExist = checkExistence(title);
-                if (vaccineTypes[currentPosVac].equals("Second Vac.") && !isExist){
-                    String location = locationET.getText().toString();
-
-                    if (location.isEmpty() || dateStr.isEmpty())
-                        Toast.makeText(this, "Empty filed do not accepted.", Toast.LENGTH_SHORT).show();
-                    else {
-                        Vaccines v2  = new Vaccines(location, dateStr);
-                        refStudents.child(title).child("v2").setValue(v2);
-                        Toast.makeText(this, "Saved successfully", Toast.LENGTH_SHORT).show();
-
-                        nameET.setText("");
-                        familyET.setText("");
-                        classET.setText("");
-                        gradeET.setText("");
-                        dateStr = "";
-                        locationET.setText("");
-                        displayDate.setText("");
-                    }
+                    nameET.setText("");
+                    familyET.setText("");
+                    classET.setText("");
+                    gradeET.setText("");
                 }
-                else if (vaccineTypes[currentPosVac].equals("First Vac.") && !isExist){
-                    String location = locationET.getText().toString();
-                    if (location.isEmpty() || dateStr.isEmpty())
-                        Toast.makeText(this, "Empty filed do not accepted.", Toast.LENGTH_SHORT).show();
-                    else {
-                        Vaccines v1  = new Vaccines(location, dateStr);
-                        Student student3 = new Student(name, familyName, classNum, gradeNum, isAllergic, v1, null);
-                        refStudents.child(title).setValue(student3);
-                        Toast.makeText(this, "Saved successfully", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else if (vaccineTypes[currentPosVac].equals("First Vac.") && isExist){
-                    Toast.makeText(this, "This Student has been inserted", Toast.LENGTH_SHORT).show();
-                }
+                else if (isAllergic)
+                    Toast.makeText(this, "This student has been inserted", Toast.LENGTH_SHORT).show();
                 else {
-                    Toast.makeText(this, "Please enter the 1st vaccine before.", Toast.LENGTH_SHORT).show();
+                    isExist = checkExistence(title);
+                    if (vaccineTypes[currentPosVac].equals("Second Vac.") && isExist){
+                        String location = locationET.getText().toString();
+
+                        if (location.isEmpty() || dateStr.isEmpty())
+                            Toast.makeText(this, "Empty filed do not accepted.", Toast.LENGTH_SHORT).show();
+                        else {
+                            Vaccines v2  = new Vaccines(location, dateStr);
+                            refStudents.child(title).child("v2").setValue(v2);
+                            Toast.makeText(this, "Saved successfully", Toast.LENGTH_SHORT).show();
+
+                            nameET.setText("");
+                            familyET.setText("");
+                            classET.setText("");
+                            gradeET.setText("");
+                            dateStr = "";
+                            locationET.setText("");
+                            displayDate.setText("");
+                        }
+                    }
+                    else if (vaccineTypes[currentPosVac].equals("First Vac.") && !isExist){
+                        String location = locationET.getText().toString();
+                        if (location.isEmpty() || dateStr.isEmpty())
+                            Toast.makeText(this, "Empty filed do not accepted.", Toast.LENGTH_SHORT).show();
+                        else {
+                            Vaccines v1  = new Vaccines(location, dateStr);
+                            Student student3 = new Student(name, familyName, classNum, gradeNum, isAllergic, v1, null);
+                            refStudents.child(title).setValue(student3);
+                            Toast.makeText(this, "Saved successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else if (vaccineTypes[currentPosVac].equals("First Vac.") && isExist){
+                        Toast.makeText(this, "This Student has been inserted", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(this, "Please enter the 1st vaccine before.", Toast.LENGTH_SHORT).show();
+                    }
                 }
+            }
+            else{
+                vac1 = new Vaccines();
+                vac2 = new Vaccines();
+                refStudents.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dS) {
+                        if (dS.exists()){
+                            Vaccines firstVac = new Vaccines();
+                            Vaccines secVac = new Vaccines();
+                            for (DataSnapshot data : dS.getChildren()){
+                                if (data.getKey().equals(studentTitle)){
+                                    firstVac = data.getValue(Student.class).getV1();
+                                    secVac = data.getValue(Student.class).getV2();
+                                }
+                            }
+                            vac1 = firstVac;
+                            vac2 = secVac;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                refStudents.child(studentTitle).removeValue(); // Removing the previous student
+                Student studentToUpdate = new Student(name, familyName, classNum, gradeNum, isAllergic, vac1, vac2);
+                studentTitle = classNum+""+name+""+familyName+""+gradeNum;
+                refStudents.child(studentTitle).setValue(studentToUpdate);
             }
         }
         else{
@@ -261,15 +328,22 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         }
     }
 
+    /**
+     * The checkExistence method checks if the student is exist in the FireBase and
+     * returns false if he isn't, otherwise, true.
+     *
+     * @param studentKey the key of the student in the FireBase.
+     */
     private boolean checkExistence(String studentKey) {
         boolean flag = false;
-        ArrayList<String> stuIdList = new ArrayList<String>();
 
         refStudents.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dS) {
-                for (DataSnapshot data: dS.getChildren()) {
-                    stuIdList.add(data.getKey());
+                if (dS.exists()){
+                    for (DataSnapshot data: dS.getChildren()) {
+                        stuIdList.add(data.getKey());
+                    }
                 }
             }
 
@@ -280,12 +354,17 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         int i = 0;
         while (i < stuIdList.size() && !flag){
             flag = stuIdList.get(i).equals(studentKey);
-            i++;
+            i ++;
         }
 
         return flag;
     }
 
+    /**
+     * The checkAll method checks all the כields of the input
+     * returns false if there is a mistake, otherwise, true.
+     *
+     */
     private boolean checkAll() {
         boolean flag = true;
         int classNum = Integer.parseInt(classET.getText().toString());
