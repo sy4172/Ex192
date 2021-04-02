@@ -8,6 +8,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.service.autofill.VisibilitySetterAction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -76,7 +77,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         sp = findViewById(R.id.sp);
 
         // To display on a Spinner object the types of the vaccines
-        vaccineTypes = new String[]{"First Vac.", "Second Vac."};
+        vaccineTypes = new String[]{"1st Vac.", "2nd Vac."};
         sp.setOnItemSelectedListener(this);
         adp = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, vaccineTypes);
         sp.setAdapter(adp);
@@ -126,6 +127,11 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                         else{
                             gradeET.setText(String.valueOf(temp.getGradeNum()));
                         }
+
+                        if (temp.getV1() != null){
+                            locationET.setText(temp.getV1().getVaccineLocation());
+                            displayDate.setText(temp.getV1().getDate());
+                        }
                         studentToDisplay = temp;
                     }
                 }
@@ -133,11 +139,6 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                 }
             });
-
-            if (studentToDisplay.getV1() != null){
-                locationET.setText(studentToDisplay.getV1().getVaccineLocation());
-                displayDate.setText(studentToDisplay.getV1().getDate());
-            }
         }
     }
 
@@ -162,6 +163,10 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
 
         dpd.show();
 
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
     }
 
     /**
@@ -254,7 +259,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                     Toast.makeText(this, "This student has been inserted", Toast.LENGTH_SHORT).show();
                 else {
                     isExist = checkExistence(title);
-                    if (vaccineTypes[currentPosVac].equals("Second Vac.") && isExist){
+                    if (vaccineTypes[currentPosVac].equals("2nd Vac.") && isExist){
                         String location = locationET.getText().toString();
 
                         if (location.isEmpty() || dateStr.isEmpty())
@@ -273,7 +278,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                             displayDate.setText("");
                         }
                     }
-                    else if (vaccineTypes[currentPosVac].equals("First Vac.") && !isExist){
+                    else if (vaccineTypes[currentPosVac].equals("1st Vac.") && !isExist){
                         String location = locationET.getText().toString();
                         if (location.isEmpty() || dateStr.isEmpty())
                             Toast.makeText(this, "Empty filed do not accepted.", Toast.LENGTH_SHORT).show();
@@ -284,7 +289,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                             Toast.makeText(this, "Saved successfully", Toast.LENGTH_SHORT).show();
                         }
                     }
-                    else if (vaccineTypes[currentPosVac].equals("First Vac.") && isExist){
+                    else if (vaccineTypes[currentPosVac].equals("1st Vac.") && isExist){
                         Toast.makeText(this, "This Student has been inserted", Toast.LENGTH_SHORT).show();
                     }
                     else {
@@ -293,34 +298,35 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 }
             }
             else{
+                refStudents.child(studentTitle).removeValue(); // Removing the student with the previous details
                 vac1 = new Vaccines();
                 vac2 = new Vaccines();
-                refStudents.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dS) {
-                        if (dS.exists()){
-                            Vaccines firstVac = new Vaccines();
-                            Vaccines secVac = new Vaccines();
-                            for (DataSnapshot data : dS.getChildren()){
-                                if (data.getKey().equals(studentTitle)){
-                                    firstVac = data.getValue(Student.class).getV1();
-                                    secVac = data.getValue(Student.class).getV2();
-                                }
-                            }
-                            vac1 = firstVac;
-                            vac2 = secVac;
-                        }
-                    }
+                String location = locationET.getText().toString();
+                dateStr = displayDate.getText().toString();
+                if (dateStr.isEmpty() || location.isEmpty()){
+                    Toast.makeText(this, "Empty filed do not accepted.", Toast.LENGTH_SHORT).show();
+                }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
+                if (currentPosVac == 0){
+                    vac1.setDate(dateStr);
+                    vac1.setVaccineLocation(location);
+                    if (studentToDisplay.getV2() != null){
+                        vac2 = studentToDisplay.getV2();
                     }
-                });
-                refStudents.child(studentTitle).removeValue(); // Removing the previous student
+                }
+                else if (currentPosVac == 1){
+                    vac1 = studentToDisplay.getV1();
+                    vac2.setVaccineLocation(location);
+                    vac2.setDate(dateStr);
+                }
+                else if (vac1 == null){
+                    Toast.makeText(this, "Please enter the 1st vaccine", Toast.LENGTH_SHORT).show();
+                }
+
                 Student studentToUpdate = new Student(name, familyName, classNum, gradeNum, isAllergic, vac1, vac2);
                 studentTitle = classNum+""+name+""+familyName+""+gradeNum;
                 refStudents.child(studentTitle).setValue(studentToUpdate);
+                Toast.makeText(this, name+" "+familyName+" has successfully saved", Toast.LENGTH_SHORT).show();
             }
         }
         else{
@@ -402,10 +408,5 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
     }
 }

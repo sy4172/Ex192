@@ -1,8 +1,7 @@
 package com.example.ex192_vaccineapp;
 
 public class Vaccines {
-    private String vaccineLocation;
-    private String date;
+    private String vaccineLocation, date;
 
     public Vaccines(){
     }

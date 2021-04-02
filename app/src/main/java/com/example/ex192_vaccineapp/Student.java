@@ -1,13 +1,10 @@
 package com.example.ex192_vaccineapp;
 
 public class Student {
-    private String name;
-    private String familyName;
-    private int classNum;
-    private int gradeNum;
+    private String name, familyName;
+    private int classNum, gradeNum;
     private boolean isAllergic;
-    private Vaccines v1;
-    private Vaccines v2;
+    private Vaccines v1, v2;
 
 
     public Student() {
