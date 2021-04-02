@@ -216,6 +216,9 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
                             }
                             customadp = new CustomAdapter(getApplicationContext(), results, details, statusList);
                             showResult.setAdapter(customadp);
+                            if (results.isEmpty()){
+                                Toast.makeText(SortActivity.this, "No students in this class", Toast.LENGTH_SHORT).show();
+                            }
                             selectedClass = 0;
                         }
 
