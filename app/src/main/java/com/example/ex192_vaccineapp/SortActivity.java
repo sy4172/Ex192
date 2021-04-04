@@ -61,7 +61,7 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
         details = new ArrayList<>();
         statusList = new ArrayList<>();
         // The options to display on the showOptions ListView object
-        options = new String[]{"All vaccinated students", "All allergic", "Order by grade", "Order by class"};
+        options = new String[]{"Options","All vaccinated students", "All allergic", "Order by grade", "Order by class"};
 
         adp = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, options);
         showOptions.setAdapter(adp);
@@ -74,6 +74,12 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
         showResult.setAdapter(null);
 
         switch (optionsDescription) {
+            case "Options":{
+                showResult.setAdapter(null);
+
+                break;
+            }
+
             case "All vaccinated students":{
                 Query q = refStudents.orderByChild("isAllergic").equalTo(false);
                 vel = new ValueEventListener() {
