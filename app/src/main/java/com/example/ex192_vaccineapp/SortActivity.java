@@ -27,6 +27,14 @@ import static com.example.ex192_vaccineapp.FBref.refStudents;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ *  * @author		Shahar Yani
+ *  * @version  	1.0
+ *  * @since		26/03/2021
+ *
+ *  * This SortActivity.class displays the sorting options and the results
+ *  and a menu move to the whole activities
+ *  */
 public class SortActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     ListView showOptions, showResult;
@@ -34,6 +42,7 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
     String[] options;
     ArrayAdapter<String> adp;
     CustomAdapter customadp;
+    // For the Queries
     ValueEventListener vel;
     int selectedClass;
 
@@ -51,6 +60,7 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
         results = new ArrayList<>();
         details = new ArrayList<>();
         statusList = new ArrayList<>();
+        // The options to display on the showOptions ListView object
         options = new String[]{"All vaccinated students", "All allergic", "Order by grade", "Order by class"};
 
         adp = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, options);
@@ -126,7 +136,6 @@ public class SortActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
             case "Order by grade":{
-                showResult.setAdapter(null);
                 openAlertDialogAndDisplay();
                 break;
             }

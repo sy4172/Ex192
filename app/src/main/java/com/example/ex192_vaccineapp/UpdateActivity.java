@@ -23,14 +23,19 @@ import java.util.Objects;
 
 import static com.example.ex192_vaccineapp.FBref.refStudents;
 
+/**
+ *  * @author		Shahar Yani
+ *  * @version  	1.0
+ *  * @since		26/03/2021
+ *
+ *  * This UpdateActivity.class displays the whole students and a ContextMenu object to do some options
+ *  and a menu move to the whole activities
+ *  */
 public class UpdateActivity extends AppCompatActivity implements View.OnCreateContextMenuListener {
 
     ListView lv;
     ArrayList<String> studentNames, statusList, studentTitle, details;
     CustomAdapter customadp;
-
-    public UpdateActivity() {
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,11 +85,6 @@ public class UpdateActivity extends AppCompatActivity implements View.OnCreateCo
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-        // put the status according the vaccine state to statusList
-
-
-        // get all the students and display in the listView object
-        // making a context menu
     }
 
     @Override
@@ -103,13 +103,14 @@ public class UpdateActivity extends AppCompatActivity implements View.OnCreateCo
         String action = item.getTitle().toString();
         if (action.equals("Update Student")){
             Intent si = new Intent(this, InputActivity.class);
+            // Saving the right health status of the student
             if (statusList.get(pos).equals("Allergic student")){
                 si.putExtra("AllergicStatus", true);
             }
             else{
                 si.putExtra("AllergicStatus", false);
             }
-            si.putExtra("updateMode",true);
+            si.putExtra("updateMode",true); // In order to to update the details in InputActivity.class
             si.putExtra("StudentTitle", studentTitle.get(pos)); // Student name to display in the fields
             startActivity(si);
         }
